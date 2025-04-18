@@ -1,0 +1,25 @@
+.slick-prev,
+.slick-next{
+    width: calc(var(--swiper-navigation-size) / 44 * 27);
+    height: var(--swiper-navigation-size);
+}
+
+.slick-next::before{
+    content: 'next';
+    font-size: 30px !important;
+}
+.slick-prev::before{
+    content:'prev';
+    font-size: 30px !important;
+}
+
+.slick-prev::before,
+.slick-next::before {
+  font-family: swiper-icons;
+  font-size: var(--swiper-navigation-size);
+  text-transform: none !important;
+  letter-spacing: 0;
+  font-variant: initial;
+  line-height: 1;
+  color: black;
+}

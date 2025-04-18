@@ -1,0 +1,5 @@
+// export const BASE_URL = "http://localhost:8081"
+export const BASE_URL = "https://nodejs.micasasucasa.in"
+// export const IMG_URL = "C:/xampp/htdocs/React/ecomuploads/"
+export const IMG_URL = "https://micasasucasa.in/ecomuploads"
+export const DEF_IMG_BRA = "https://cdn.magicdecor.in/com/2024/10/11185630/Pleasant-Modern-Landscape-Wallpaper-M.jpg"

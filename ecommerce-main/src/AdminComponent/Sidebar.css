@@ -1,0 +1,13 @@
+/* .msidebar {
+  min-height: calc(100vh - 65px);
+  background: #223e9c;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 600;
+  padding: 0;
+  z-index: 11;
+  transition: width 0.25s ease, background 0.25s ease;
+  -webkit-transition: width 0.25s ease, background 0.25s ease;
+  -moz-transition: width 0.25s ease, background 0.25s ease;
+  -ms-transition: width 0.25s ease, background 0.25s ease;
+  width: 300px;
+}  */
