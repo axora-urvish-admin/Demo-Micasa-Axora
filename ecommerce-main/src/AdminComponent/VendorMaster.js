@@ -50,6 +50,8 @@ const VendorMaster = () => {
     const [vendordata, setVendorData] = useState([])
     const [confirmationVisibleMap, setConfirmationVisibleMap] = useState({});
     const [hide, setHide] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('');
+
     async function getVendordata() {
         axios.get(`${BASE_URL}/vendor_data`)
             .then((res) => {
@@ -60,7 +62,6 @@ const VendorMaster = () => {
                 console.log(err)
             })
     }
-
 
     const handleConfirmation = (id) => {
         const userConfirmed = window.confirm('Are you sure you want to proceed?');
@@ -87,7 +88,6 @@ const VendorMaster = () => {
         }
     };
 
-
     const roledata = {
      role : Cookies.get(`role`),
      pageid : 2
@@ -103,11 +103,13 @@ const VendorMaster = () => {
         dispatch(getRoleData(roledata))
     }, [])
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
-
-
-
-
+    const filteredVendorData = vendordata.filter(vendor => 
+        vendor.vendor_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handlestatus = (e, id) => {
         const value = e.target.value
@@ -190,7 +192,7 @@ const VendorMaster = () => {
         },
     ];
 
-    const rowsWithIds = vendordata.map((row, index) => ({ index: index + 1, ...row }));
+    const rowsWithIds = filteredVendorData.map((row, index) => ({ index: index + 1, ...row }));
 
     return (
 
@@ -217,6 +219,13 @@ const VendorMaster = () => {
                                     </div>
                                   
                                         <div className=''>
+                                            <input 
+                                                type="text" 
+                                                placeholder="Search by Vendor Name" 
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                className="form-control"
+                                            />
                                             <DataGrid
                                                 sx={{width:"100%"}}
                                                 rows={rowsWithIds}
