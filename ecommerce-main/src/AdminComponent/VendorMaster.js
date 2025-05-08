@@ -3,6 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BASE_URL } from './BaseUrl'
 import EditIcon from "@mui/icons-material/Edit";
+import TextField from '@mui/material/TextField';
+
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import InnerHeader from './InnerHeader';
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -219,13 +225,23 @@ const VendorMaster = () => {
                                     </div>
                                   
                                         <div className=''>
-                                            <input 
-                                                type="text" 
-                                                placeholder="Search by Vendor Name" 
-                                                value={searchQuery}
-                                                onChange={handleSearchChange}
-                                                className="form-control"
-                                            />
+                                        <TextField
+    fullWidth
+    label="Search Vendor"
+    variant="outlined"
+    value={searchQuery}
+    onChange={handleSearchChange}
+    sx={{ marginBottom: 2 }}
+    InputProps={{
+        startAdornment: (
+            <InputAdornment position="start">
+                <SearchIcon />
+            </InputAdornment>
+        ),
+    }}
+/>
+
+
                                             <DataGrid
                                                 sx={{width:"100%"}}
                                                 rows={rowsWithIds}
