@@ -12,6 +12,8 @@ import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoleData } from "../Store/Role/role-action";
 import { Autocomplete, TextField } from "@mui/material";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Brand = () => {
   const [brand, setBrand] = useState([]);
@@ -28,6 +30,7 @@ const Brand = () => {
     title: "" || uid.title,
     description: "" || uid.description,
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setValue({
@@ -188,6 +191,14 @@ const Brand = () => {
     setImage(file);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredBrandData = brand.filter(brand => 
+    brand.brand_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const columns = [
     {
       field: "index",
@@ -246,7 +257,7 @@ const Brand = () => {
       },
     },
   ];
-  const rowsWithIds = brand.map((row, index) => ({ index: index + 1, ...row }));
+  const rowsWithIds = filteredBrandData.map((row, index) => ({ index: index + 1, ...row }));
 
   const roledata = {
     role: Cookies.get(`role`),
@@ -387,7 +398,23 @@ const Brand = () => {
                     </div>
 
                     <div>
+                      <TextField
+                        fullWidth
+                        label="Search Brand"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ marginBottom: 2 }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                       <DataGrid
+                        sx={{width:"100%"}}
                         rows={rowsWithIds}
                         columns={columns}
                         getRowId={(row) => row.id}
@@ -416,56 +443,6 @@ const Brand = () => {
                         </div>
                       )}
                     </div>
-
-                    {/* <div class="table-responsive pt-3">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        #
-                                                    </th>
-                                                    <th>
-                                                        Title
-                                                    </th>
-
-                                                    <th>
-                                                        Action
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                                {brand.map((item, index) => {
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>
-                                                                {index + 1}
-                                                            </td>
-                                                            <td>
-                                                                {item.title}
-                                                            </td>
-
-
-                                                            <td>
-                                                                <EditIcon onClick={() => handleUpdate(item.id)} />
-                                                                <DeleteIcon style={{ color: "red" }} onClick={() => handleClick(item.id)} />
-                                                                <button className='btn btn-sm btn-danger' >Delete</button>
-                                                            </td>
-                                                            {confirmationVisibleMap[item.id] && (
-                                                                <div className='confirm-delete'>
-                                                                    <p>Are you sure you want to delete?</p>
-                                                                    <button onClick={() => handleDelete(item.id)} className='btn btn-sm btn-primary'>OK</button>
-                                                                    <button onClick={() => handleCancel(item.id)} className='btn btn-sm btn-danger'>Cancel</button>
-                                                                </div>
-                                                            )}
-                                                        </tr>
-                                                    )
-                                                })}
-
-
-                                            </tbody>
-                                        </table>
-                                    </div> */}
                   </div>
                 </div>
               </div>

@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const BrandRequest = () => {
   const [brand, setBrand] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState('');
 
   async function getbrandrequest() {
     axios
@@ -44,6 +46,15 @@ const BrandRequest = () => {
 
   }
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter brands based on search query
+  const filteredBrands = brand.filter(b =>
+    b.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div class="container-fluid page-body-wrapper col-lg-10">
@@ -56,15 +67,24 @@ const BrandRequest = () => {
                 <div class="card-body">
                   <div className="d-flex justify-content-between">
                     <div>
-                      <h4 class="card-title">Product Approval </h4>
-                      <p class="card-description">List Of Products</p>
+                      <h4 class="card-title">Brand Approval</h4>
+                      <p class="card-description">List of Brand Requests</p>
                     </div>
                     <div>
-                      {/* <Link to="/webapp/product">
-                        <button className=" btn btn-primary">Add Product</button>
-                        <Button variant="outlined" size="medium"><AddCircleOutlineIcon  style={{fontSize : "16px"}}/> Add Product</Button>
-                      </Link> */}
-                      {/* <Link to="/webapp/product" ><button className=' btn btn-primary'>Add Product</button></Link> */}
+                      <TextField
+                        label="Search Brand"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
                   </div>
 
@@ -72,28 +92,21 @@ const BrandRequest = () => {
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>
-                            #
-                          </th>
+                          <th>#</th>
                           <th>Image</th>
                           <th>Brand Name</th>
                           <th>Vendor Name</th>
                           <th>Action</th>
                         </tr>
                       </thead>
-
                       <tbody>
-                        {brand.map((item, index) => {
+                        {filteredBrands.map((item, index) => {
                           return (
-                            <tr>
-                              <td>
-                                {index + 1}
-                              </td>
+                            <tr key={item.id}>
+                              <td>{index + 1}</td>
                               <td><img src={`${IMG_URL}/brand/` + item.logo} alt="" /></td>
                               <td>{item.title}</td>
-                              <td>
-                                {item.vendor_name}
-                              </td>
+                              <td>{item.vendor_name}</td>
                               <td>
                                 <Link>
                                   <RemoveRedEyeIcon type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" />

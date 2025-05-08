@@ -14,12 +14,16 @@ import noimg from "../assets/images/noimg.jpg";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoleData } from "../Store/Role/role-action";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ProductCatalog = () => {
   const [product, setProductData] = useState([]);
   const [image, setImg] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
 
   async function getcatData() {
     axios
@@ -125,6 +129,16 @@ const ProductCatalog = () => {
   const endIndex = startIndex + rowsPerPage;
   const currentRows = product.slice(startIndex, endIndex);
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter products based on search query
+  const filteredProducts = product.filter(p =>
+    p.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div class="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
@@ -141,6 +155,20 @@ const ProductCatalog = () => {
                         <p class="card-description">List Of Products</p>
                       </div>
                       <div>
+                        <TextField
+                          label="Search Product"
+                          variant="outlined"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
+                          sx={{ width: '300px', marginRight: '10px' }}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
                         {roleaccess > 3 && (
                           <Link to="/webapp/product/:update_id">
                             <button className=" btn btn-primary">
@@ -170,7 +198,7 @@ const ProductCatalog = () => {
                         </thead>
 
                         <tbody>
-                          {currentRows?.map((item, index) => {
+                          {filteredProducts.map((item, index) => {
                             return (
                               <tr key={item.id}>
                                 <td>{startIndex + index + 1}</td>

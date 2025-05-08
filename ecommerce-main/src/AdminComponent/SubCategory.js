@@ -13,6 +13,8 @@ import Loader from "./Loader";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoleData } from "../Store/Role/role-action";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 const SubCategory = () => {
   const [confirmationVisibleMap, setConfirmationVisibleMap] = useState({});
@@ -31,6 +33,8 @@ const SubCategory = () => {
     slug: "" || uid.slug,
     description: "" || uid.description,
   });
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const validateForm = () => {
     let isValid = true;
@@ -281,6 +285,14 @@ const SubCategory = () => {
     dispatch(getRoleData(roledata));
   }, []);
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredSubcategoryData = subcat.filter(subcategory => 
+    subcategory.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div class="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
@@ -398,9 +410,26 @@ const SubCategory = () => {
                       </div>
                     </div>
 
+                    <TextField
+                      fullWidth
+                      label="Search Subcategory"
+                      variant="outlined"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      sx={{ marginBottom: 2 }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
                     <div>
                       <DataGrid
-                        rows={rowsWithIds}
+                        sx={{width:"100%"}}
+                        rows={filteredSubcategoryData.map((row, index) => ({ index: index + 1, ...row }))}
                         columns={columns}
                         getRowId={(row) => row.id}
                         initialState={{

@@ -18,6 +18,8 @@ import { getRoleData } from '../Store/Role/role-action';
 import Switch from '@mui/material/Switch';
 import { styled } from "@mui/material/styles";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 
@@ -72,6 +74,8 @@ const Category = () => {
         slug: "" || uid.slug,
         description: "" || uid.description,
     })
+
+    const [searchQuery, setSearchQuery] = useState('');
 
     // useEffect(() => {
     //     setValue({
@@ -439,6 +443,14 @@ const Category = () => {
         dispatch(getRoleData(roledata))
     }, [])
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredCategoryData = cat.filter(category => 
+        category.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
 
         <div class="container-fluid page-body-wrapper position-relative col-lg-10" >
@@ -519,22 +531,30 @@ const Category = () => {
 
                                     </div>
                                     <div>
+                                        <TextField
+                                            fullWidth
+                                            label="Search Category"
+                                            variant="outlined"
+                                            value={searchQuery}
+                                            onChange={handleSearchChange}
+                                            sx={{ marginBottom: 2 }}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+
                                         <DataGrid
-                                            rows={rowsWithIds}
+                                            sx={{width:"100%"}}
+                                            rows={filteredCategoryData.map((row, index) => ({ index: index + 1, ...row }))}
                                             columns={columns}
-                                            disableColumnFilter
-                                            disableColumnSelector
-                                            disableDensitySelector
                                             getRowId={(row) => row.id}
                                             initialState={{
                                                 pagination: {
-                                                    paginationModel: { pageSize: 10, page: 0 },
-                                                },
-                                            }}
-                                            slots={{ toolbar: GridToolbar }}
-                                            slotProps={{
-                                                toolbar: {
-                                                    showQuickFilter: true,
+                                                  paginationModel: { pageSize: 10, page: 0 },
                                                 },
                                             }}
                                         />

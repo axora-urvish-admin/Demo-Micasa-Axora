@@ -12,175 +12,141 @@ import InnerHeader from './InnerHeader';
 import Loader from './Loader';
 
 
+// ... imports remain the same
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 const ProductTag = () => {
-
-    const [cat, setCatData] = useState([])
-    const [error, setError] = useState({})
-    const [image, setImage] = useState()
-    const [uid, setUid] = useState([])
+    const [cat, setCatData] = useState([]);
+    const [error, setError] = useState({});
+    const [uid, setUid] = useState([]);
     const [confirmationVisibleMap, setConfirmationVisibleMap] = useState({});
-    const [cid, setCid] = useState("")
-    const [loader, setLoader] = useState(false)
+    const [cid, setCid] = useState("");
+    const [loader, setLoader] = useState(false);
 
+    const [searchQuery, setSearchQuery] = useState(""); // 🔍 Added for search
     const [value, setValue] = useState({
-        title: "" || uid.title,
-   
-        description: "" || uid.description,
-    })
+        title: "",
+        description: "",
+    });
 
     useEffect(() => {
         setValue({
-            title: uid.title,
-            description: uid.description,
-     
-        })
-    }, [uid])
+            title: uid.title || "",
+            description: uid.description || "",
+        });
+    }, [uid]);
 
     const validateForm = () => {
-        let isValid = true
-        const newErrors = {}
+        let isValid = true;
+        const newErrors = {};
 
         if (!value.title) {
             isValid = false;
-            newErrors.title = "title is required"
+            newErrors.title = "Title is required";
         }
 
-        setError(newErrors)
-        return isValid
-    }
-
-
+        setError(newErrors);
+        return isValid;
+    };
 
     async function getcatData() {
         axios.get(`${BASE_URL}/producttag_data`)
             .then((res) => {
-                console.log(res.data)
-                setCatData(res.data)
+                setCatData(res.data);
             })
-            .catch((err) => {
-                console.log(err)
-            })
+            .catch((err) => console.log(err));
     }
 
     useEffect(() => {
-        getcatData()
-    }, [])
-
-
+        getcatData();
+    }, []);
 
     const handleClick = (id) => {
-        setCid(id)
+        setCid(id);
         setConfirmationVisibleMap((prevMap) => ({
             ...prevMap,
             [id]: true,
         }));
     };
+
     const handleCancel = (id) => {
-        // Hide the confirmation dialog without performing the delete action
         setConfirmationVisibleMap((prevMap) => ({
             ...prevMap,
             [id]: false,
         }));
     };
 
-
-
-
     const handleDelete = (id) => {
-        const data = {
-            cat_id: id
-        }
-
-        axios.post(`${BASE_URL}/producttag_delete`, data)
-            .then((res) => {
-                getcatData()
-
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        axios.post(`${BASE_URL}/producttag_delete`, { cat_id: id })
+            .then(() => getcatData())
+            .catch((err) => console.log(err));
 
         setConfirmationVisibleMap((prevMap) => ({
             ...prevMap,
             [id]: false,
         }));
-    }
+    };
 
     const handleUpdate = (id) => {
-        setValue({
-            description: ""
-        })
-        setLoader(true)
+        setValue({ description: "" });
+        setLoader(true);
         axios.post(`${BASE_URL}/producttag_update`, { u_id: id })
             .then((res) => {
-                setUid(res.data[0])
-                setLoader(false)
+                setUid(res.data[0]);
+                setLoader(false);
             })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
-
-
-
+            .catch((err) => console.log(err));
+    };
 
     const handleSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         if (validateForm()) {
-            setLoader(true)
-
-            // const formdata = new FormData();
-
-            // formdata.append('title', value.title)
-            // formdata.append('description', value.description)
-            // formdata.append('user_id', decryptedUserId())
-            // formdata.append('u_id', uid.id)
+            setLoader(true);
 
             const data = {
-                title : value.title,
-                description : value.description,
-                user_id : decryptedUserId(),
-                u_id : uid.id
-            }
+                title: value.title,
+                description: value.description,
+                user_id: decryptedUserId(),
+                u_id: uid.id,
+            };
 
             axios.post(`${BASE_URL}/add_producttag`, data)
                 .then((res) => {
-                    alert(res.data)
-                    getcatData()
-                    setLoader(false)
-                
-
-                    setValue({
-                        title: "" ,
-                        slug: "",
-                        description: "",
-                    })
-
-                    setImage('')
-                    setUid([])
-
+                    alert(res.data);
+                    getcatData();
+                    setLoader(false);
+                    setValue({ title: "", description: "" });
+                    setUid([]);
                 })
-                .catch((err) => {
-                    console.log(err)
-                })
+                .catch((err) => console.log(err));
         }
-
-    }
-
+    };
 
     const onhandleChange = (e) => {
-        setValue((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+        setValue((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
 
-        if (value.slug) {
-            axios.post(`${BASE_URL}/check_againslug`, { slug: value.slug })
-                .then((res) => {
-                    console.log(res)
-                })
-        }
+    // 🔍 Safe filtering with fallback
+    const filteredCat = cat.filter(item =>
+        (item.title || "").toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-    }
+    const rowsWithIds = filteredCat.map((row, index) => ({ index: index + 1, ...row }));
+
+    const roledata = {
+        role: Cookies.get(`role`),
+        pageid: 16,
+    };
+
+    const dispatch = useDispatch();
+    const roleaccess = useSelector((state) => state.roleAssign?.roleAssign[0]?.accessid);
+
+    useEffect(() => {
+        dispatch(getRoleData(roledata));
+    }, []);
 
     const columns = [
         {
@@ -193,88 +159,83 @@ const ProductTag = () => {
             filterable: false,
         },
         { field: 'title', headerName: 'Title', flex: 2 },
-       
         {
             field: 'actions',
             type: 'actions',
             headerName: 'Action',
             flex: 1,
-            renderCell: (params) => {
-                return (
-                    <>
-                        {roleaccess >= 2 && <EditIcon sx={{ cursor: "pointer" }} onClick={() => handleUpdate(params.row.id)} />}
-                        {roleaccess > 3 && <DeleteIcon style={{ color: "red" }} onClick={() => handleClick(params.row.id)} />}
-                    </>
-                )
-            }
+            renderCell: (params) => (
+                <>
+                    {roleaccess >= 2 && <EditIcon sx={{ cursor: "pointer" }} onClick={() => handleUpdate(params.row.id)} />}
+                    {roleaccess > 3 && <DeleteIcon style={{ color: "red" }} onClick={() => handleClick(params.row.id)} />}
+                </>
+            ),
         },
     ];
 
-    const rowsWithIds = cat.map((row, index) => ({ index: index + 1, ...row }));
-
-    const roledata = {
-        role: Cookies.get(`role`),
-        pageid: 16
-    }
-
-    const dispatch = useDispatch()
-    const roleaccess = useSelector((state) => state.roleAssign?.roleAssign[0]?.accessid);
-
-
-    useEffect(() => {
-        dispatch(getRoleData(roledata))
-    }, [])
-
-
-
     return (
-
-        <div class="container-fluid page-body-wrapper position-relative col-lg-10" >
+        <div className="container-fluid page-body-wrapper position-relative col-lg-10">
             <InnerHeader />
             {loader && <Loader />}
-            {roleaccess > 1 ? <div class="main-panel">
-                <div class="content-wrapper">
-                    <div class="row">
-                        <div class="col-lg-5 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4 class="card-title">Add producttag</h4>
+            {roleaccess > 1 ? (
+                <div className="main-panel">
+                    <div className="content-wrapper">
+                        <div className="row">
+                            <div className="col-lg-5 grid-margin stretch-card">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h4 className="card-title">Add Product Tag</h4>
+                                        <form className="forms-sample py-3" onSubmit={handleSubmit}>
+                                            <div className="form-group">
+                                                <label>Title <span className='text-danger'>*</span></label>
+                                                <input type="text" className="form-control" value={value.title} placeholder="Title" name='title' onChange={onhandleChange} />
+                                                {error.title && <span className='text-danger'>{error.title}</span>}
+                                            </div>
 
-                                    <form class="forms-sample py-3" onSubmit={handleSubmit}>
-                                        <div class="form-producttag">
-                                            <label for="exampleInputUsername1">Title<span className='text-danger'>*</span></label>
-                                            <input type="text" class="form-control" id="exampleInputUsername1" value={value.title} placeholder="Title" name='title' onChange={onhandleChange} />
-                                            {error.title && <span className='text-danger'>{error.title}</span>}
-                                        </div>
-                                     
-                                     
-                                        <div class="form-producttag ">
-                                            <label for="exampleTextarea1">Description</label>
-                                            <textarea class="form-control" id="exampleTextarea1" rows="4" value={value.description} name='description' onChange={onhandleChange}></textarea>
+                                            <div className="form-group">
+                                                <label>Description</label>
+                                                <textarea className="form-control" rows="4" value={value.description} name='description' onChange={onhandleChange}></textarea>
+                                            </div>
 
-                                        </div>
-                                        {roleaccess > 2 && <>  <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                            <button type='button' onClick={() => {
-                                                window.location.reload()
-                                            }} class="btn btn-light">Cancel</button></>}
-
-                                    </form>
+                                            {roleaccess > 2 && (
+                                                <>
+                                                    <button type="submit" className="btn btn-primary mr-2">Submit</button>
+                                                    <button type='button' onClick={() => window.location.reload()} className="btn btn-light">Cancel</button>
+                                                </>
+                                            )}
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-7 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div className='d-flex justify-content-between'>
-                                        <div>
-                                            <h4 class="card-title">producttag </h4>
-                                            <p class="card-description">
-                                                List Of producttag
-                                            </p>
+
+                            <div className="col-lg-7 grid-margin stretch-card">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="d-flex justify-content-between">
+                                            <div>
+                                                <h4 className="card-title">Product Tags</h4>
+                                                <p className="card-description">List of Product Tags</p>
+                                            </div>
                                         </div>
 
-                                    </div>
-                                    <div>
+                                        {/* 🔍 Search Field */}
+                                        <TextField
+                                            fullWidth
+                                            label="Search Product Tags"
+                                            variant="outlined"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            sx={{ marginBottom: 2 }}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+
+                                        {/* Data Grid */}
                                         <DataGrid
                                             rows={rowsWithIds}
                                             columns={columns}
@@ -287,25 +248,21 @@ const ProductTag = () => {
                                         />
 
                                         {confirmationVisibleMap[cid] && (
-                                            <div className='confirm-delete'>
+                                            <div className='confirm-delete mt-2'>
                                                 <p>Are you sure you want to delete?</p>
                                                 <button onClick={() => handleDelete(cid)} className='btn btn-sm btn-primary'>OK</button>
                                                 <button onClick={() => handleCancel(cid)} className='btn btn-sm btn-danger'>Cancel</button>
                                             </div>
                                         )}
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div> : <h1>No Access</h1>}
-
+            ) : <h1>No Access</h1>}
         </div>
-
-    )
-}
+    );
+};
 
 export default ProductTag;

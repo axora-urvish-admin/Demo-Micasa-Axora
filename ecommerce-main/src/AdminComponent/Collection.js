@@ -14,6 +14,9 @@ import decryptedUserId from '../Utils/UserID';
 import { BASE_URL, IMG_URL } from './BaseUrl';
 import InnerHeader from './InnerHeader';
 import Loader from './Loader';
+import { Link } from 'react-router-dom';
+import { InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const Android12Switch = styled(Switch)(({ theme }) => ({
@@ -67,6 +70,7 @@ const Collection = () => {
         slug: "" || uid.slug,
         description: "" || uid.description,
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         if (uid) {
@@ -393,7 +397,15 @@ const handleSubmit = (e) => {
         dispatch(getRoleData(roledata))
     }, [])
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
+    // Filter collections based on search query
+    const filteredCollections = cat.filter(collection =>
+        collection.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
 
@@ -402,14 +414,43 @@ const handleSubmit = (e) => {
             {loader && <Loader />}
             {roleaccess > 1 ? <div class="main-panel">
                 <div class="content-wrapper">
-                    <div class="row">
-                        <div class="col-lg-5 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4 class="card-title">Add Collection</h4>
+                    <div className="d-flex justify-content-between">
+                        <div>
+                            <h4 className="card-title">Collections</h4>
+                            <p className="card-description">List of Collections</p>
+                        </div>
+                        <div>
+                            <TextField
+                                label="Search Collection"
+                                variant="outlined"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                                sx={{ width: '300px', marginRight: '10px' }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            {roleaccess > 3 && (
+                                <Link to="/webapp/collection/add">
+                                    <button className="btn btn-primary">
+                                        Add Collection
+                                    </button>
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-5 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h4 className="card-title">Add Collection</h4>
 
-                                    <form class="forms-sample py-3" onSubmit={handleSubmit}>
-                                    <div class="form-group">
+                                    <form className="forms-sample py-3" onSubmit={handleSubmit}>
+                                    <div className="form-group">
                                             <label for="exampleInputUsername1">Group<span className='text-danger'>*</span></label>
                                             <Autocomplete
                                                 disablePortal
@@ -427,47 +468,47 @@ const handleSubmit = (e) => {
                                             />
                                             {error.group && <span className='text-danger'>{error.group}</span>}
                                         </div>
-                                        <div class="form-group">
+                                        <div className="form-group">
                                             <label for="exampleInputUsername1">Title<span className='text-danger'>*</span></label>
-                                            <input type="text" class="form-control" id="exampleInputUsername1" value={value.title} placeholder="Title" name='title' onChange={onhandleChange} />
+                                            <input type="text" className="form-control" id="exampleInputUsername1" value={value.title} placeholder="Title" name='title' onChange={onhandleChange} />
                                             {error.title && <span className='text-danger'>{error.title}</span>}
                                         </div>
-                                        <div class="form-group">
+                                        <div className="form-group">
                                             <label for="exampleInputUsername1">Category Slug<span className='text-danger'>*</span></label>
-                                            <input type="text" onClick={handleslugclick} class="form-control" id="exampleInputUsername1" placeholder="Enter.." name='slug' value={value.slug} onChange={onhandleChange} />
+                                            <input type="text" onClick={handleslugclick} className="form-control" id="exampleInputUsername1" placeholder="Enter.." name='slug' value={value.slug} onChange={onhandleChange} />
                                             {error.slug && <span className='text-danger'>{error.slug}</span>}
 
                                         </div>
-                                        <div class="form-group">
+                                        <div className="form-group">
                                             <label for="exampleInputUsername1">Image<span className='text-danger'>*</span></label>
-                                            <input type="file" class="form-control" id="exampleInputUsername1" onChange={handleUpload} name="image" value={value.logo} placeholder="Enter.." />
+                                            <input type="file" className="form-control" id="exampleInputUsername1" onChange={handleUpload} name="image" value={value.logo} placeholder="Enter.." />
                                             {error.logo && <span className='text-danger'>{error.logo}</span>}
 
                                         </div>
                                         <div>
                                             <img style={{ width: "200px" }} src={`${IMG_URL}/Collection/${uid.image}`} alt="" />
                                         </div>
-                                        <div class="form-group ">
+                                        <div className="form-group ">
                                             <label for="exampleTextarea1">Description</label>
-                                            <textarea class="form-control" id="exampleTextarea1" rows="4" value={value.description} name='description' onChange={onhandleChange}></textarea>
+                                            <textarea className="form-control" id="exampleTextarea1" rows="4" value={value.description} name='description' onChange={onhandleChange}></textarea>
 
                                         </div>
-                                        {roleaccess > 2 && <>  <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                        {roleaccess > 2 && <>  <button type="submit" className="btn btn-primary mr-2">Submit</button>
                                             <button type='button' onClick={() => {
                                                 window.location.reload()
-                                            }} class="btn btn-light">Cancel</button></>}
+                                            }} className="btn btn-light">Cancel</button></>}
 
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-7 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
+                        <div className="col-lg-7 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
                                     <div className='d-flex justify-content-between'>
                                         <div>
-                                            <h4 class="card-title">Collection</h4>
-                                            <p class="card-description">
+                                            <h4 className="card-title">Collection</h4>
+                                            <p className="card-description">
                                                 List Of Collection
                                             </p>
                                         </div>
@@ -475,7 +516,7 @@ const handleSubmit = (e) => {
                                     </div>
                                     <div>
                                         <DataGrid
-                                            rows={rowsWithIds}
+                                            rows={filteredCollections}
                                             columns={columns}
                                             getRowId={(row) => row.id}
                                             initialState={{
