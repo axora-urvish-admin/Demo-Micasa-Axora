@@ -10,6 +10,9 @@ import decryptedUserId from '../Utils/UserID';
 import { BASE_URL, IMG_URL } from './BaseUrl';
 import InnerHeader from './InnerHeader';
 import Loader from './Loader';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 
@@ -29,6 +32,7 @@ const Group = () => {
         slug: "" || uid.slug,
         description: "" || uid.description,
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setValue({
@@ -270,6 +274,13 @@ console.log(value.title, "rrr")
 
     }
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredGroupData = cat.filter(group => 
+        group.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
 
@@ -334,13 +345,30 @@ console.log(value.title, "rrr")
 
                                     </div>
                                     <div>
+                                        <TextField
+                                            fullWidth
+                                            label="Search Group"
+                                            variant="outlined"
+                                            value={searchQuery}
+                                            onChange={handleSearchChange}
+                                            sx={{ marginBottom: 2 }}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+
                                         <DataGrid
-                                            rows={rowsWithIds}
+                                            sx={{width:"100%"}}
+                                            rows={filteredGroupData.map((row, index) => ({ index: index + 1, ...row }))}
                                             columns={columns}
                                             getRowId={(row) => row.id}
                                             initialState={{
                                                 pagination: {
-                                                    paginationModel: { pageSize: 10, page: 0 },
+                                                  paginationModel: { pageSize: 10, page: 0 },
                                                 },
                                             }}
                                         />
