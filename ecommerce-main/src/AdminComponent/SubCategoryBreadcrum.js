@@ -13,6 +13,8 @@ import Loader from "./Loader";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoleData } from "../Store/Role/role-action";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const SubCategoryBreadcrum = () => {
   const [confirmationVisibleMap, setConfirmationVisibleMap] = useState({});
@@ -29,6 +31,7 @@ const SubCategoryBreadcrum = () => {
     category: "" || uid.cat_id,
     title: "" || uid.title,
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   const validateForm = () => {
     let isValid = true;
@@ -161,6 +164,16 @@ const SubCategoryBreadcrum = () => {
     }
   }, [uid, cat]);
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter subcategories based on search query
+  const filteredSubCategories = subcat.filter(subCategory =>
+    subCategory.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const columns = [
     {
       field: "index",
@@ -217,7 +230,7 @@ const SubCategoryBreadcrum = () => {
       },
     },
   ];
-  const rowsWithIds = subcat.map((row, index) => ({
+  const rowsWithIds = filteredSubCategories.map((row, index) => ({
     index: index + 1,
     ...row,
   }));
@@ -319,6 +332,22 @@ const SubCategoryBreadcrum = () => {
                       <div>
                         <h4 class="card-title">SubCategory Breadcrum </h4>
                         <p class="card-description">List Of SubCategory Breadcrum</p>
+                      </div>
+                      <div>
+                        <TextField
+                          label="Search by Title"
+                          variant="outlined"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
+                          sx={{ width: '300px', marginRight: '10px' }}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment
+                            ),
+                          }}
+                        />
                       </div>
                     </div>
 

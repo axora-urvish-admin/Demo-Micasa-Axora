@@ -13,10 +13,14 @@ import InnerHeader from "./InnerHeader";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import chair from '../assets/images/chair.jpg'
 import noimg from '../assets/images/noimg.jpg'
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 const ProductApproval = () => {
   const [data, setdata] = useState([]);
   const [image, setImg] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   async function getrequestData() {
     axios
@@ -45,61 +49,68 @@ const ProductApproval = () => {
     getSigleImg()
   }, []);
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
-
-
-
+  // Filter products based on search query
+  const filteredProducts = data.filter(product =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div class="container-fluid page-body-wrapper col-lg-10">
+    <div className="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
-      <div class="main-panel">
-        <div class="content-wrapper">
-          <div class="row">
-            <div class="col-lg-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
+      <div className="main-panel">
+        <div className="content-wrapper">
+          <div className="row">
+            <div className="col-lg-12 grid-margin stretch-card">
+              <div className="card">
+                <div className="card-body">
                   <div className="d-flex justify-content-between">
                     <div>
-                      <h4 class="card-title">Product Approval </h4>
-                      <p class="card-description">List Of Products</p>
+                      <h4 className="card-title">Product Approval</h4>
+                      <p className="card-description">List of Product Approvals</p>
                     </div>
                     <div>
-                      {/* <Link to="/webapp/product">
-                        <button className=" btn btn-primary">Add Product</button>
-                        <Button variant="outlined" size="medium"><AddCircleOutlineIcon  style={{fontSize : "16px"}}/> Add Product</Button>
-                      </Link> */}
-                      {/* <Link to="/webapp/product" ><button className=' btn btn-primary'>Add Product</button></Link> */}
+                      <TextField
+                        label="Search by Name"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
                   </div>
 
-                  <div class="table-responsive pt-3">
-                    <table class="table table-bordered">
+                  <div className="table-responsive pt-3">
+                    <table className="table table-bordered">
                       <thead>
                         <tr>
-                          <th>
-                            #
-                          </th>
+                          <th>#</th>
                           <th>Image</th>
                           <th>Name</th>
                           <th>Category</th>
                           <th>Subcategory</th>
-                          <th>Vendor  Name</th>
+                          <th>Vendor</th>
                           <th>Price</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
-
                       <tbody>
-                        {data.map((item,index) => {
+                        {filteredProducts.map((item, index) => {
                           return (
-                            <tr>
-                 
-                              
-                              <td>
-                                {index + 1}
-                              </td>
+                            <tr key={item.id}>
+                              <td>{index + 1}</td>
                               <td>{image.filter((ele) => ele.product_id == item.id).map((item) => { return (<img src={`${IMG_URL}/productimg/` + item.image1} alt="" />) })}  {image.filter((ele) => ele.product_id === item.id).length === 0 && (
                                 <img src={noimg} alt="No" />
                               )}</td>
@@ -108,20 +119,17 @@ const ProductApproval = () => {
                               <td>{item.subcategory}</td>
                               <td>{item.vendor}</td>
                               <td>{item.price}</td>
-
                               <td>
-                              {"Pending"}
+                                {"Pending"}
                               </td>
                               <td>
                                 <Link to={`/webapp/productapprovalview/${item.id}`}>
                                   <RemoveRedEyeIcon />
                                 </Link>
-
                               </td>
                             </tr>
-                          )
+                          );
                         })}
-
                       </tbody>
                     </table>
                   </div>

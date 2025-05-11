@@ -4,18 +4,30 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const VendorRequest = () => {
   
-  const [vendor, setvendor] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter vendors based on search query
+  const filteredVendors = vendors.filter(vendor =>
+    vendor.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   async function getvendorrequest() {
     axios
       .get(`${BASE_URL}/vendor_request`)
       .then((res) => {
-        setvendor(res.data);
+        setVendors(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -52,46 +64,52 @@ const VendorRequest = () => {
 
 
   return (
-    <div class="container-fluid page-body-wrapper col-lg-10">
+    <div className="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
-      <div class="main-panel">
-        <div class="content-wrapper">
-          <div class="row">
-            <div class="col-lg-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
+      <div className="main-panel">
+        <div className="content-wrapper">
+          <div className="row">
+            <div className="col-lg-12 grid-margin stretch-card">
+              <div className="card">
+                <div className="card-body">
                   <div className="d-flex justify-content-between">
                     <div>
-                      <h4 class="card-title">Vendor Request</h4>
-                      <p class="card-description">List Of Vendor request</p>
+                      <h4 className="card-title">Vendor Approval</h4>
+                      <p className="card-description">List of Vendor Requests</p>
                     </div>
                     <div>
-                      {/* <Link to="/webapp/product">
-                        <button className=" btn btn-primary">Add Product</button>
-                        <Button variant="outlined" size="medium"><AddCircleOutlineIcon  style={{fontSize : "16px"}}/> Add Product</Button>
-                      </Link> */}
-                      {/* <Link to="/webapp/product" ><button className=' btn btn-primary'>Add Product</button></Link> */}
+                      <TextField
+                        label="Search by First Name"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
                   </div>
 
-                  <div class="table-responsive pt-3">
-                    <table class="table table-bordered">
+                  <div className="table-responsive pt-3">
+                    <table className="table table-bordered">
                       <thead>
                         <tr>
-                          <th>
-                            #
-                          </th>
-                          <th>Firstname</th>
+                          <th>#</th>
+                          <th>First Name</th>
+                          <th>Last Name</th>
                           <th>Email</th>
-                          <th>Requested Date</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
-
                       <tbody>
-                        {vendor.map((item, index) => {
-                          const isoDateStr = item.created_date;
+                        {filteredVendors.map((vendor, index) => {
+                          const isoDateStr = vendor.created_date;
 
                           // Convert to Date object
                           const dateObj = new Date(isoDateStr);
@@ -107,68 +125,59 @@ const VendorRequest = () => {
                           console.log(formattedDate);  // Outputs: 2024-06-03
                           
                           return (
-                            <tr>
-                              <td>
-                                {index + 1}
-                              </td>
-                              <td>{item.firstname} {item.lastname}</td>
-                              <td>
-                                {item.email}
-                              </td>
-                              <td>
-                                {formattedDate}
-                              </td>
-                              <td>Pending</td>
+                            <tr key={vendor.id}>
+                              <td>{index + 1}</td>
+                              <td>{vendor.firstname}</td>
+                              <td>{vendor.lastname}</td>
+                              <td>{vendor.email}</td>
+                              <td>{vendor.status}</td>
                               <td>
                                 <Link>
                                   <RemoveRedEyeIcon type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" />
                                 </Link>
                               </td>
 
-                              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h5 class="modal-title" id="exampleModalLabel">Add Message</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div className="modal-dialog">
+                                  <div className="modal-content">
+                                    <div className="modal-header">
+                                      <h5 className="modal-title" id="exampleModalLabel">Add Message</h5>
+                                      <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                      <div className='col-lg-4'>
-                                        <div class="card-body">
-                                          <ul class="list-stats" style={{ paddingLeft: "0", width: "200px" }}>
-                                            <li class="">
-                                              <span class="lable">Vendor name:</span>
-                                              &nbsp;<span class="value"><b>{item.firstname} {item.lastname}</b></span>
+                                    <div className="modal-body">
+                                      <div className="col-lg-4">
+                                        <div className="card-body">
+                                          <ul className="list-stats" style={{ paddingLeft: "0", width: "200px" }}>
+                                            <li className="">
+                                              <span className="lable">Vendor name:</span>
+                                              &nbsp;<span className="value"><b>{vendor.firstname} {vendor.lastname}</b></span>
                                             </li>
-                                            <li class="w-200 py-1">
-                                              <span class="lable">Email</span>
-                                              &nbsp; <span class="value"><b>{item.email}</b></span>
+                                            <li className="w-200 py-1">
+                                              <span className="lable">Email</span>
+                                              &nbsp; <span className="value"><b>{vendor.email}</b></span>
                                             </li>
-                                            <li class="w-200 py-1">
-                                              <span class="lable">Mobile</span>
-                                              &nbsp; <span class="value"><b>{item.mobile}</b></span>
+                                            <li className="w-200 py-1">
+                                              <span className="lable">Mobile</span>
+                                              &nbsp; <span className="value"><b>{vendor.mobile}</b></span>
                                             </li>
-                                            <li class="w-200 py-1">
-                                              <span class="lable">Message</span>
-                                              &nbsp; <span class="value"><b>{item.message}</b></span>
+                                            <li className="w-200 py-1">
+                                              <span className="lable">Message</span>
+                                              &nbsp; <span className="value"><b>{vendor.message}</b></span>
                                             </li>
-                                     
                                           </ul>
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                      <button type="button" class="btn btn-success" onClick={() =>handleapprove(item.id,item.firstname,item.lastname,item.email,item.mobile) } data-bs-dismiss="modal">Approve</button>
+                                    <div className="modal-footer">
+                                      <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                      <button type="button" className="btn btn-success" onClick={() => handleapprove(vendor.id, vendor.firstname, vendor.lastname, vendor.email, vendor.mobile)} data-bs-dismiss="modal">Approve</button>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-
                             </tr>
-                          )
+                          );
                         })}
-
                       </tbody>
                     </table>
                   </div>

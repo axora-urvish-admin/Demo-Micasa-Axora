@@ -7,6 +7,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Android12Switch = styled(Switch)(({ theme }) => ({
   padding: 8,
@@ -56,8 +59,7 @@ const Advertise = () => {
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState()
-
-
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchLocations();
@@ -206,6 +208,16 @@ const Advertise = () => {
   useEffect(() => {
     getAdvertisements();
   }, []);
+
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter advertisements based on search query
+  const filteredAdvertisements = advertisements.filter(advertisement =>
+    advertisement.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="container-fluid page-body-wrapper col-lg-10">
@@ -388,7 +400,22 @@ const Advertise = () => {
                       <h4 className="card-title">Advertisements </h4>
                       <p className="card-description">List of Advertisements</p>
                     </div>
-               
+                    <div>
+                      <TextField
+                        label="Search by Location"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <div className="table-responsive">
@@ -406,7 +433,7 @@ const Advertise = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {advertisements.map((ad) => (
+                        {filteredAdvertisements.map((ad) => (
                           <tr key={ad.id}>
                             <td>{ad.id}</td>
                             <td>loc-{ad.location}</td>

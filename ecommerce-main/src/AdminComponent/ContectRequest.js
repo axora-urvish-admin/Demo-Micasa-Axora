@@ -4,10 +4,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ContectRequest = () => {
   const [custom, setCustom] = useState([]);
   const [viewedItems, setViewedItems] = useState(new Set()); // To keep track of viewed items
+  const [searchQuery, setSearchQuery] = useState('');
 
   async function getCustomRequest() {
     axios
@@ -55,6 +58,16 @@ const ContectRequest = () => {
       });
   };
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter contacts based on search query
+  const filteredContacts = custom.filter(contact =>
+    contact.firstname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
@@ -72,11 +85,20 @@ const ContectRequest = () => {
                       </p>
                     </div>
                     <div>
-                      {/* <Link to="/webapp/product">
-                        <button className=" btn btn-primary">Add Product</button>
-                        <Button variant="outlined" size="medium"><AddCircleOutlineIcon  style={{fontSize : "16px"}}/> Add Product</Button>
-                      </Link> */}
-                      {/* <Link to="/webapp/product" ><button className=' btn btn-primary'>Add Product</button></Link> */}
+                      <TextField
+                        label="Search by First Name"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
                   </div>
 
@@ -94,7 +116,7 @@ const ContectRequest = () => {
                       </thead>
 
                       <tbody>
-                        {custom.map((item, index) => {
+                        {filteredContacts.map((item, index) => {
                           const isoDateStr = item.created_date;
                           const dateObj = new Date(isoDateStr);
                           const formattedDate = `${dateObj.getUTCFullYear()}-${String(

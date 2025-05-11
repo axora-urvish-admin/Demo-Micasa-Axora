@@ -4,10 +4,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const CustomizeRequest = () => {
   const [custom, setCustom] = useState([]);
   const [viewedItems, setViewedItems] = useState(new Set()); // To keep track of viewed items
+  const [searchQueryCustomer, setSearchQueryCustomer] = useState('');
+  const [searchQueryProduct, setSearchQueryProduct] = useState('');
 
   async function getCustomRequest() {
     axios
@@ -55,6 +59,21 @@ const CustomizeRequest = () => {
       });
   };
 
+  // Function to handle search input changes
+  const handleSearchChangeCustomer = (event) => {
+    setSearchQueryCustomer(event.target.value);
+  };
+
+  const handleSearchChangeProduct = (event) => {
+    setSearchQueryProduct(event.target.value);
+  };
+
+  // Filter requests based on search queries
+  const filteredRequests = custom.filter(request =>
+    (request.name ? request.name.toLowerCase().includes(searchQueryCustomer.toLowerCase()) : false) &&
+    (request.title ? request.title.toLowerCase().includes(searchQueryProduct.toLowerCase()) : false)
+  );
+
   return (
     <div className="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
@@ -72,11 +91,34 @@ const CustomizeRequest = () => {
                       </p>
                     </div>
                     <div>
-                      {/* <Link to="/webapp/product">
-                        <button className=" btn btn-primary">Add Product</button>
-                        <Button variant="outlined" size="medium"><AddCircleOutlineIcon  style={{fontSize : "16px"}}/> Add Product</Button>
-                      </Link> */}
-                      {/* <Link to="/webapp/product" ><button className=' btn btn-primary'>Add Product</button></Link> */}
+                      <TextField
+                        label="Search by Customer Name"
+                        variant="outlined"
+                        value={searchQueryCustomer}
+                        onChange={handleSearchChangeCustomer}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                      <TextField
+                        label="Search by Product Name"
+                        variant="outlined"
+                        value={searchQueryProduct}
+                        onChange={handleSearchChangeProduct}
+                        sx={{ width: '300px', marginRight: '10px' }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
                   </div>
 
@@ -94,7 +136,7 @@ const CustomizeRequest = () => {
                       </thead>
 
                       <tbody>
-                        {custom.map((item, index) => {
+                        {filteredRequests.map((item, index) => {
                           const isoDateStr = item.created_date;
                           const dateObj = new Date(isoDateStr);
                           const formattedDate = `${dateObj.getUTCFullYear()}-${String(
