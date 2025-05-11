@@ -11,6 +11,8 @@ import Loader from './Loader';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRoleData } from '../Store/Role/role-action';
+import { TextField, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const CancellationReasons = () => {
@@ -27,6 +29,7 @@ const CancellationReasons = () => {
         description: "" || uid.description,
 
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setValue({
@@ -161,6 +164,15 @@ const CancellationReasons = () => {
         setImage(file)
     }
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    // Filter cancellation reasons based on search query
+    const filteredCancellation = cancellation.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const columns = [
         {
@@ -239,40 +251,33 @@ const CancellationReasons = () => {
                         </div>
                         <div class="col-lg-7 grid-margin stretch-card">
                             <div class="card">
-                                <div class="card-body">
-                                    <div className='d-flex justify-content-between'>
+                                <div className="card-body">
+                                    <div className="d-flex justify-content-between">
                                         <div>
-                                            <h4 class="card-title">cancellation Reasons</h4>
-                                            <p class="card-description">
+                                            <h4 className="card-title">Cancellation Reasons</h4>
+                                            <p className="card-description">
                                                 List Of cancellation Reasons
                                             </p>
                                         </div>
-
+                                        <div>
+                                            <TextField
+                                                label="Search by Title"
+                                                variant="outlined"
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                sx={{ width: '300px', marginRight: '10px' }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchIcon />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        </div>
                                     </div>
-
-                                    <div>
-                                        <DataGrid
-                                            rows={rowsWithIds}
-                                            columns={columns}
-                                            getRowId={(row) => row.id}
-                                            initialState={{
-                                                pagination: {
-                                                    paginationModel: { pageSize: 10, page: 0 },
-                                                },
-                                            }}
-                                        />
-
-                                        {confirmationVisibleMap[cid] && (
-                                            <div className='confirm-delete'>
-                                                <p>Are you sure you want to delete?</p>
-                                                <button onClick={() => handleDelete(cid)} className='btn btn-sm btn-primary'>OK</button>
-                                                <button onClick={() => handleCancel(cid)} className='btn btn-sm btn-danger'>Cancel</button>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* <div class="table-responsive pt-3">
-                                        <table class="table table-bordered">
+                                    <div className="table-responsive">
+                                        <table className="table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>
@@ -288,8 +293,7 @@ const CancellationReasons = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-
-                                                {cancellation.map((item, index) => {
+                                                {filteredCancellation.map((item, index) => {
                                                     return (
                                                         <tr key={index}>
                                                             <td>
@@ -315,12 +319,9 @@ const CancellationReasons = () => {
                                                         </tr>
                                                     )
                                                 })}
-
-
                                             </tbody>
                                         </table>
-                                    </div> */}
-
+                                    </div>
                                 </div>
                             </div>
                         </div>

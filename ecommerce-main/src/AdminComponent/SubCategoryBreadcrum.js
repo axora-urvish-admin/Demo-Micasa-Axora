@@ -250,26 +250,26 @@ const SubCategoryBreadcrum = () => {
   }, []);
 
   return (
-    <div class="container-fluid page-body-wrapper col-lg-10">
+    <div className="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
       {loader && <Loader />}
       {roleaccess > 1 ? (
-        <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="row">
-              <div class="col-lg-5 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Add SubCategory Breadcrum</h4>
+        <div className="main-panel">
+          <div className="content-wrapper">
+            <div className="row">
+              <div className="col-lg-5 grid-margin stretch-card">
+                <div className="card">
+                  <div className="card-body">
+                    <h4 className="card-title">Add SubCategory Breadcrum</h4>
 
-                    <form class="forms-sample py-3" onSubmit={handleSubmit}>
-                      <div class="form-group">
+                    <form className="forms-sample py-3" onSubmit={handleSubmit}>
+                      <div className="form-group">
                         <label for="exampleInputUsername1">
                           Title<span className="text-danger">*</span>
                         </label>
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           id="exampleInputUsername1"
                           value={value.title}
                           placeholder="Title"
@@ -281,13 +281,13 @@ const SubCategoryBreadcrum = () => {
                           <span className="text-danger">{error.title}</span>
                         )}
                       </div>
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="exampleInputUsername1">
                           Image<span className="text-danger">*</span>
                         </label>
                         <input
                           type="file"
-                          class="form-control"
+                          className="form-control"
                           id="exampleInputUsername1"
                           onChange={handleUpload}
                           name="image"
@@ -307,7 +307,7 @@ const SubCategoryBreadcrum = () => {
                       {roleaccess > 2 && (
                         <>
                           {" "}
-                          <button type="submit" class="btn btn-primary mr-2">
+                          <button type="submit" className="btn btn-primary mr-2">
                             Submit
                           </button>
                           <button
@@ -315,7 +315,7 @@ const SubCategoryBreadcrum = () => {
                             onClick={() => {
                               window.location.reload();
                             }}
-                            class="btn btn-light"
+                            className="btn btn-light"
                           >
                             Cancel
                           </button>
@@ -325,13 +325,13 @@ const SubCategoryBreadcrum = () => {
                   </div>
                 </div>
               </div>
-              <div class="col-lg-7 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
+              <div className="col-lg-7 grid-margin stretch-card">
+                <div className="card">
+                  <div className="card-body">
                     <div className="d-flex justify-content-between">
                       <div>
-                        <h4 class="card-title">SubCategory Breadcrum </h4>
-                        <p class="card-description">List Of SubCategory Breadcrum</p>
+                        <h4 className="card-title">SubCategory Breadcrum </h4>
+                        <p className="card-description">List Of SubCategory Breadcrum</p>
                       </div>
                       <div>
                         <TextField
@@ -344,7 +344,7 @@ const SubCategoryBreadcrum = () => {
                             startAdornment: (
                               <InputAdornment position="start">
                                 <SearchIcon />
-                              </InputAdornment
+                              </InputAdornment>
                             ),
                           }}
                         />

@@ -10,7 +10,8 @@ import { BASE_URL, IMG_URL } from '../AdminComponent/BaseUrl';
 import decryptedvendorid from "../Utils/Vendorid";
 import noimg from '../assets/images/noimg.jpg';
 import InnerHeader from "./InnerHeader";
-import { TextField } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 
 const ProductStock = () => {
@@ -20,6 +21,7 @@ const ProductStock = () => {
         add: "",
         remove: ""
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
 
     async function getstockdata() {
@@ -110,6 +112,16 @@ const ProductStock = () => {
         setValue((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    // Filter products based on search query
+    const filteredProducts = product.filter(item =>
+        item.title && typeof item.title === 'string' && item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div class="container-fluid page-body-wrapper">
             <InnerHeader />
@@ -124,7 +136,22 @@ const ProductStock = () => {
                                             <h4 class="card-title">Products Stock </h4>
                                             <p class="card-description">List Of Products </p>
                                         </div>
-                                      
+                                        <div>
+                                            <TextField
+                                                label="Search by Name"
+                                                variant="outlined"
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                sx={{ width: '300px', marginRight: '10px' }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchIcon />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div class="table-responsive pt-3">
@@ -143,7 +170,7 @@ const ProductStock = () => {
                                             </thead>
 
                                             <tbody>
-                                                {product.map((item, index) => {
+                                                {filteredProducts.map((item, index) => {
                                                     return (
                                                         <tr>
 

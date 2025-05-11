@@ -59,7 +59,7 @@ const Advertise = () => {
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState()
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQueryTitle, setSearchQueryTitle] = useState('');
 
   useEffect(() => {
     fetchLocations();
@@ -209,14 +209,14 @@ const Advertise = () => {
     getAdvertisements();
   }, []);
 
-  // Function to handle search input changes
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  // Function to handle search input changes for title
+  const handleSearchChangeTitle = (event) => {
+    setSearchQueryTitle(event.target.value);
   };
 
-  // Filter advertisements based on search query
+  // Filter advertisements based on search query for title
   const filteredAdvertisements = advertisements.filter(advertisement =>
-    advertisement.location.toLowerCase().includes(searchQuery.toLowerCase())
+    advertisement.title.toLowerCase().includes(searchQueryTitle.toLowerCase())
   );
 
   return (
@@ -402,10 +402,10 @@ const Advertise = () => {
                     </div>
                     <div>
                       <TextField
-                        label="Search by Location"
+                        label="Search by Title"
                         variant="outlined"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
+                        value={searchQueryTitle}
+                        onChange={handleSearchChangeTitle}
                         sx={{ width: '300px', marginRight: '10px' }}
                         InputProps={{
                           startAdornment: (

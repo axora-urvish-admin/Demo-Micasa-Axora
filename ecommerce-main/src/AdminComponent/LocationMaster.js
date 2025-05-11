@@ -5,6 +5,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Android12Switch = styled(Switch)(({ theme }) => ({
   padding: 8,
@@ -42,6 +45,17 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
 const LocationMaster = () => {
   const [locations, setLocations] = useState([]);
   const [slot, setSlot] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter locations based on search query
+  const filteredLocations = locations.filter(location =>
+    location.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Function to fetch locations from the server
   const fetchLocations = async () => {
@@ -116,6 +130,22 @@ const LocationMaster = () => {
                     <h4 className="card-title">Location Master</h4>
                     <p className="card-description">List of Location Master</p>
                   </div>
+                  <div>
+                    <TextField
+                      label="Search by Location"
+                      variant="outlined"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      sx={{ width: '300px', marginRight: '10px' }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
                 </div>
                 <div className="table-responsive mt-3">
                   <table className="table table-hover align-middle">
@@ -129,7 +159,7 @@ const LocationMaster = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {locations.map((loc) => (
+                      {filteredLocations.map((loc) => (
                         <tr key={loc.id}>
                           <td>{loc.id}</td>
                           <td>{loc.name}</td>

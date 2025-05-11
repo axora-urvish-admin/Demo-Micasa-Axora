@@ -10,6 +10,8 @@ import decryptedUserId from "../Utils/UserID";
 import { BASE_URL, IMG_URL } from "./BaseUrl";
 import InnerHeader from "./InnerHeader";
 import Loader from "./Loader";
+import { TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const GroupBreadcrum = () => {
   const [cat, setCatData] = useState([]);
@@ -24,6 +26,7 @@ const GroupBreadcrum = () => {
     title: "" || uid.title,
     slug: "" || uid.slug,
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setValue({
@@ -232,6 +235,16 @@ const GroupBreadcrum = () => {
       });
   };
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter categories based on search query
+  const filteredCat = cat.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div class="container-fluid page-body-wrapper position-relative col-lg-10">
       <InnerHeader />
@@ -318,10 +331,26 @@ const GroupBreadcrum = () => {
                         <h4 class="card-title">Group Breadcrum </h4>
                         <p class="card-description">List Of Group Breadcrum</p>
                       </div>
+                      <div>
+                        <TextField
+                          label="Search by Title"
+                          variant="outlined"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
+                          sx={{ width: '300px', marginRight: '10px' }}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
                     </div>
                     <div>
                       <DataGrid
-                        rows={rowsWithIds}
+                        rows={filteredCat.map((row, index) => ({ index: index + 1, ...row }))}
                         columns={columns}
                         getRowId={(row) => row.id}
                         initialState={{

@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import decryptedUserId from '../Utils/UserID';
 import { BASE_URL, IMG_URL } from './BaseUrl';
 import InnerHeader from './InnerHeader';
+import { TextField, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const Breadcrumbs = () => {
@@ -20,6 +22,7 @@ const Breadcrumbs = () => {
 
 
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setValue({
@@ -169,6 +172,16 @@ const Breadcrumbs = () => {
 
     };
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    // Filter breadcrumbs based on search query
+    const filteredBreadcrumbs = Breadcrumbs.filter(breadcrumb =>
+        breadcrumb.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
 
         <div class="container-fluid page-body-wrapper col-lg-10">
@@ -209,9 +222,23 @@ const Breadcrumbs = () => {
                                     <div className='d-flex justify-content-between'>
                                         <div>
                                             <h4 class="card-title"> List Of Breadcrumbs </h4>
-
                                         </div>
-
+                                        <div>
+                                            <TextField
+                                                label="Search by Title"
+                                                variant="outlined"
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                sx={{ width: '300px', marginRight: '10px' }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchIcon />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div class="table-responsive pt-3">
@@ -239,7 +266,7 @@ const Breadcrumbs = () => {
                                             <tbody>
 
                                                 {
-                                                    Breadcrumbs.map((item, index) => {
+                                                    filteredBreadcrumbs.map((item, index) => {
                                                         return (
                                                             <tr >
                                                                 <td>

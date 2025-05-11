@@ -4,6 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from './BaseUrl';
 import InnerHeader from './InnerHeader';
+import { TextField, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Orders = () => {
   
@@ -18,6 +20,7 @@ const Orders = () => {
         deliveryStatus: "",
         paymentStatus: "",
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
     const onhandleChange = (e) => {
         setValue((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -53,7 +56,15 @@ const Orders = () => {
         getOrderdata()
     }, [])
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
+    // Filter orders based on search query
+    const filteredOrders = order.filter(item =>
+        item.orderno.includes(searchQuery)
+    );
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -113,6 +124,22 @@ const Orders = () => {
                                         <div>
                                             <h4 class="card-title">Search By </h4>
 
+                                        </div>
+                                        <div>
+                                            <TextField
+                                                label="Search by Order ID"
+                                                variant="outlined"
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                sx={{ width: '300px', marginRight: '10px' }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchIcon />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                     <form class="forms-sample" onSubmit={handleSubmit}>
@@ -229,7 +256,7 @@ const Orders = () => {
 
                                             <tbody>
 
-                                                {filteredData.map((item) => {
+                                                {filteredOrders.map((item) => {
                                                     return (
                                                         <tr >
                                                             <td>

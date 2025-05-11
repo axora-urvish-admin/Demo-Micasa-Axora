@@ -20,7 +20,7 @@ const VendorRequest = () => {
 
   // Filter vendors based on search query
   const filteredVendors = vendors.filter(vendor =>
-    vendor.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+    vendor.firstName && vendor.firstName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   async function getvendorrequest() {

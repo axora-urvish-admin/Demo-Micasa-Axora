@@ -8,6 +8,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BASE_URL, IMG_URL } from './BaseUrl';
 import InnerHeader from './InnerHeader';
 import Loader from "./Loader";
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const Banner = () => {
@@ -27,6 +30,7 @@ const Banner = () => {
         description: "" || uid.description,
 
     })
+    const [searchQuery, setSearchQuery] = useState('');
 
 
 
@@ -209,6 +213,15 @@ const Banner = () => {
 
     var viewid = String(value.view);
 
+    // Function to handle search input changes
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    // Filter banners based on search query
+    const filteredBanners = banner.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
 
@@ -292,9 +305,23 @@ const Banner = () => {
                                     <div className='d-flex justify-content-between'>
                                         <div>
                                             <h4 className="card-title"> List Of Gallery </h4>
-
                                         </div>
-
+                                        <div>
+                                            <TextField
+                                                label="Search by Title"
+                                                variant="outlined"
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                sx={{ width: '300px', marginRight: '10px' }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchIcon />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="table-responsive pt-3">
@@ -321,7 +348,7 @@ const Banner = () => {
                                             </thead>
                                             <tbody>
 
-                                                {banner.map((item, index) => {
+                                                {filteredBanners.map((item, index) => {
                                                     return (
                                                         <tr key={index}>
                                                             <td>

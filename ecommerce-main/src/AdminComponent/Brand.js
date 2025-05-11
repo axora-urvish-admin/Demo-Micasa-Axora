@@ -11,9 +11,8 @@ import Loader from "./Loader";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoleData } from "../Store/Role/role-action";
-import { Autocomplete, TextField } from "@mui/material";
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
+import { Autocomplete, TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Brand = () => {
   const [brand, setBrand] = useState([]);
@@ -191,14 +190,6 @@ const Brand = () => {
     setImage(file);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const filteredBrandData = brand.filter(brand => 
-    brand.brand_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const columns = [
     {
       field: "index",
@@ -257,7 +248,7 @@ const Brand = () => {
       },
     },
   ];
-  const rowsWithIds = filteredBrandData.map((row, index) => ({ index: index + 1, ...row }));
+  const rowsWithIds = brand.map((row, index) => ({ index: index + 1, ...row }));
 
   const roledata = {
     role: Cookies.get(`role`),
@@ -273,6 +264,16 @@ const Brand = () => {
     dispatch(getRoleData(roledata));
   }, []);
 
+  // Function to handle search input changes
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter brands based on search query
+  const filteredBrands = brand.filter(brand =>
+    brand.title && typeof brand.title === 'string' && brand.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div class="container-fluid page-body-wrapper col-lg-10">
       <InnerHeader />
@@ -280,15 +281,15 @@ const Brand = () => {
       {roleaccess > 1 ? (
         <div class="main-panel">
           <div class="content-wrapper">
-            <div class="row">
-              <div class="col-lg-5 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Add Brand</h4>
+            <div className="row">
+              <div className="col-lg-5 grid-margin stretch-card">
+                <div className="card">
+                  <div className="card-body">
+                    <h4 className="card-title">Add Brand</h4>
 
-                    <form class="forms-sample py-3" onSubmit={handleSubmit}>
+                    <form className="forms-sample py-3" onSubmit={handleSubmit}>
 
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="exampleInputUsername1">Vendor</label>
                         <Autocomplete
                           disablePortal
@@ -314,13 +315,13 @@ const Brand = () => {
                         )}
                       </div>
 
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="exampleInputUsername1">
                           Title<span className="text-danger">*</span>
                         </label>
                         <input
                           type="text"
-                          class="form-control"
+                          className="form-control"
                           id="exampleInputUsername1"
                           value={value.title}
                           placeholder="Title"
@@ -331,13 +332,13 @@ const Brand = () => {
                           <span className="text-danger">{error.title}</span>
                         )}
                       </div>
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="exampleInputUsername1">
                           Logo<span className="text-danger">*</span>
                         </label>
                         <input
                           type="file"
-                          class="form-control"
+                          className="form-control"
                           id="exampleInputUsername1"
                           onChange={handleUpload}
                           name="image"
@@ -354,10 +355,10 @@ const Brand = () => {
                           alt=""
                         />
                       </div>
-                      <div class="form-group ">
+                      <div className="form-group ">
                         <label for="exampleTextarea1">Description</label>
                         <textarea
-                          class="form-control"
+                          className="form-control"
                           id="exampleTextarea1"
                           rows="4"
                           value={value.description}
@@ -369,7 +370,7 @@ const Brand = () => {
                       {roleaccess > 2 && (
                         <>
                           {" "}
-                          <button type="submit" class="btn btn-primary mr-2">
+                          <button type="submit" className="btn btn-primary mr-2">
                             Submit
                           </button>
                           <button
@@ -377,7 +378,7 @@ const Brand = () => {
                             onClick={() => {
                               window.location.reload();
                             }}
-                            class="btn btn-light"
+                            className="btn btn-light"
                           >
                             Cancel
                           </button>
@@ -387,43 +388,43 @@ const Brand = () => {
                   </div>
                 </div>
               </div>
-              <div class="col-lg-7 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
+              <div className="col-lg-7 grid-margin stretch-card">
+                <div className="card">
+                  <div className="card-body">
                     <div className="d-flex justify-content-between">
                       <div>
-                        <h4 class="card-title">Brand </h4>
-                        <p class="card-description">List Of Brand</p>
+                        <h4 className="card-title">Brand </h4>
+                        <p className="card-description">List Of Brand</p>
+                      </div>
+                      <div>
+                        <TextField
+                          label="Search by Title"
+                          variant="outlined"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
+                          sx={{ width: '300px', marginRight: '10px' }}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
                       </div>
                     </div>
 
                     <div>
-                      <TextField
-                        fullWidth
-                        label="Search Brand"
-                        variant="outlined"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        sx={{ marginBottom: 2 }}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      <DataGrid
-                        sx={{width:"100%"}}
-                        rows={rowsWithIds}
-                        columns={columns}
-                        getRowId={(row) => row.id}
-                        initialState={{
-                          pagination: {
-                            paginationModel: { pageSize: 10, page: 0 },
-                          },
-                        }}
-                      />
+                     <DataGrid
+  rows={filteredBrands.map((row, index) => ({ index: index + 1, ...row }))}
+  columns={columns}
+  getRowId={(row) => row.id}
+  initialState={{
+    pagination: {
+      paginationModel: { pageSize: 10, page: 0 },
+    },
+  }}
+/>
 
                       {confirmationVisibleMap[cid] && (
                         <div className="confirm-delete">
